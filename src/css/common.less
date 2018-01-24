@@ -1,0 +1,15 @@
+.zc-fl {
+    float: left;
+}
+.zc-fr {
+    float: right;
+}
+.zc-clear {
+    &::after {
+        content: '';
+        clear: both;
+        height: 0;
+        visibility: hidden;
+        display: block;
+    }
+}
