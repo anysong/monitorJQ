@@ -6,21 +6,28 @@ function Flex($rootNode, item, index){
 	var api = require('../config/api.js')();
 	var core = require('../core/core.js')();
 	var loadTpl = require('../util/load.js');
+	var chart = require('./chart.js');
 	//获取dom
 	var flexDom = $rootNode.find('.zc-main-flex-chart').eq(index);
 	
 	var renderChart = function(result){
-		console.log('获取数据',result);
 		loadTpl(api.TPL[item.type], function(tpl){
 			console.log('tpl',tpl);
+			console.log(Mustache);
+			var json = {};
+			var rendered = Mustache.render(tpl, json);
+			
+			var chartDomMap = {
+                'pie': '.zc-c-chart-pie',
+                'line': '.zc-c-chart-line',
+            };
+            flexDom.append(rendered);
+            console.log(item.type);
+			var chartDom = flexDom.find(chartDomMap[item.type])[0];
+			console.log(chartDom);
+			//渲染生成chart
+			chart(chartDom, index, item);
 		});
-		//渲染生成chart
-		if(item.type == 'pie'){
-
-		};
-		if(item.type == 'line'){
-
-		};
 	};
 	//初始化图表
    	var initChart = function(){

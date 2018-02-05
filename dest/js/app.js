@@ -70,7 +70,77 @@
 
 })(document.body)
 
-},{"./js/component/flex.js":2,"./js/core/core.js":4}],2:[function(require,module,exports){
+},{"./js/component/flex.js":3,"./js/core/core.js":5}],2:[function(require,module,exports){
+function Chart(flexDom, index, item){
+	console.log(index);
+	var flexChart = echarts.init(flexDom);
+	var option = {};
+
+	if(item.type == 'line'){
+		option = {
+			title: {
+				text: '大饼'
+			},
+		    legend: {
+		    	data: ['一组','二组','三组']
+		    },
+			xAxis: {
+				type: 'category',
+				data: ['一季度','二季度','三季度','四季度']
+			},
+			yAxis: {
+				type: 'value',
+				data: [100,500,1000]
+			},
+			series: [
+				{
+					name: 'one',
+					type: 'line',
+					data: [120,130,0,150,160]
+				},
+				{
+					name: 'one2',
+					type: 'line',
+					data: [120,130,0,120,130,0,150,160,150,160]
+				},
+				{
+					name: 'one3',
+					type: 'line',
+					data: [5,120,130,0,120,130,0,150,160,150,160]
+				}
+
+			]
+		};
+		 
+	}else {
+		option = {
+	        title: {
+	            text: '112'
+	        },
+	        tooltip: {},
+	        legend: {
+	            data: ['访问来源']
+	        },
+	        series : [
+	        	{
+	        		name: '饼',
+	        		type: 'pie',
+	        		data: [
+	        			{'name':'ama','value':10},
+	        			{'name':'aba','value':10},
+	        			{'name':'aca','value':10},
+	        			{'name':'ada','value':10},
+	        			{'name':'aea','value':10}]
+	        	}
+	        ]
+    	};
+	}
+	console.log(option);
+	flexChart.setOption(option);
+};
+
+module.exports = Chart;
+},{}],3:[function(require,module,exports){
 /*
 * 只负责处理图表对象，及初始化，和更新
 */
@@ -79,21 +149,28 @@ function Flex($rootNode, item, index){
 	var api = require('../config/api.js')();
 	var core = require('../core/core.js')();
 	var loadTpl = require('../util/load.js');
+	var chart = require('./chart.js');
 	//获取dom
 	var flexDom = $rootNode.find('.zc-main-flex-chart').eq(index);
 	
 	var renderChart = function(result){
-		console.log('获取数据',result);
 		loadTpl(api.TPL[item.type], function(tpl){
 			console.log('tpl',tpl);
+			console.log(Mustache);
+			var json = {};
+			var rendered = Mustache.render(tpl, json);
+			
+			var chartDomMap = {
+                'pie': '.zc-c-chart-pie',
+                'line': '.zc-c-chart-line',
+            };
+            flexDom.append(rendered);
+            console.log(item.type);
+			var chartDom = flexDom.find(chartDomMap[item.type])[0];
+			console.log(chartDom);
+			//渲染生成chart
+			chart(chartDom, index, item);
 		});
-		//渲染生成chart
-		if(item.type == 'pie'){
-
-		};
-		if(item.type == 'line'){
-
-		};
 	};
 	//初始化图表
    	var initChart = function(){
@@ -118,7 +195,7 @@ function Flex($rootNode, item, index){
 
 module.exports = Flex;
 
-},{"../config/api.js":3,"../core/core.js":4,"../util/load.js":6}],3:[function(require,module,exports){
+},{"../config/api.js":4,"../core/core.js":5,"../util/load.js":7,"./chart.js":2}],4:[function(require,module,exports){
 function Api(){
 	var baseUrl = '';
 	var apiMap = {
@@ -144,7 +221,7 @@ function Api(){
 
 module.exports = Api;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 function Core(){
     // 用户身份相关
     var login = require('./login.js')();
@@ -172,7 +249,7 @@ function Core(){
 
 module.exports = Core;
 
-},{"./login.js":5}],5:[function(require,module,exports){
+},{"./login.js":6}],6:[function(require,module,exports){
 function Login(){
 	var data = {
 
@@ -183,7 +260,7 @@ function Login(){
 }
 
 module.exports = Login;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 function Load(url, callback){
 	var tpls = {};
 
